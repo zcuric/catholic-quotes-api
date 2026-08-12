@@ -7,6 +7,7 @@
     }
   },
   "rewrites": [
+    { "source": "/docs", "destination": "/docs.html" },
     { "source": "/api", "destination": "/api/index.py?route=health" },
     { "source": "/api/health", "destination": "/api/index.py?route=health" },
     { "source": "/api/docs", "destination": "/api/index.py?route=docs" },

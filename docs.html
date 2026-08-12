@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Human-readable documentation for the Catholic Quotes API." />
+    <meta name="theme-color" content="#f4eee2" />
+    <title>API documentation — Catholic Quotes API</title>
+    <style>
+      :root { --ink: #27201b; --paper: #f4eee2; --wash: #fbf8f1; --muted: #6d6258; --line: rgba(69, 48, 34, .2); --wine: #7c2d31; --wine-dark: #5f2025; --gold: #a27837; --serif: Georgia, 'Times New Roman', serif; --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { min-width: 320px; margin: 0; color: var(--ink); background-color: var(--paper); background-image: radial-gradient(rgba(64, 45, 30, .075) .6px, transparent .75px); background-size: 7px 7px; font-family: var(--sans); }
+      a { color: inherit; }
+      code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+      .skip-link { position: fixed; top: 12px; left: 12px; z-index: 4; padding: 10px 14px; background: var(--wine); color: #fff; transform: translateY(-160%); }
+      .skip-link:focus { transform: translateY(0); }
+      .site-header, main, .site-footer { width: min(100% - 40px, 1180px); margin: 0 auto; }
+      .site-header { display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 24px 0 18px; border-bottom: 1px solid var(--line); }
+      .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+      .cross { position: relative; width: 16px; height: 21px; flex: none; }
+      .cross::before, .cross::after { position: absolute; content: ''; background: var(--wine); }
+      .cross::before { top: 0; left: 6px; width: 4px; height: 21px; }
+      .cross::after { top: 6px; left: 1px; width: 14px; height: 4px; }
+      .brand-copy { display: grid; gap: 2px; }
+      .brand-name { font: 700 13px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+      .brand-subtitle { color: var(--muted); font: 11px/1.2 var(--sans); letter-spacing: .08em; }
+      .site-nav { display: flex; gap: 18px; color: var(--muted); font-size: 12px; }
+      .site-nav a { text-underline-offset: 4px; text-decoration-color: transparent; transition: color .2s ease, text-decoration-color .2s ease; }
+      .site-nav a:hover, .site-nav a[aria-current='page'] { color: var(--wine); text-decoration-color: currentColor; }
+      a:focus-visible { outline: 2px solid var(--wine); outline-offset: 3px; }
+      main { padding: clamp(54px, 8vw, 102px) 0 78px; }
+      .intro { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(240px, .55fr); gap: clamp(32px, 8vw, 96px); align-items: end; padding-bottom: 52px; border-bottom: 1px solid var(--line); }
+      .eyebrow { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; color: var(--wine); font: 700 10px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+      .eyebrow::before { width: 30px; height: 1px; background: currentColor; content: ''; }
+      h1, h2, h3 { font-family: var(--serif); font-weight: 500; letter-spacing: -.04em; }
+      h1 { max-width: 700px; margin: 0; font-size: clamp(3.3rem, 7.4vw, 6.8rem); line-height: .86; text-wrap: balance; }
+      .intro-copy { max-width: 330px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
+      .intro-copy strong { color: var(--ink); font-weight: 650; }
+      .doc-layout { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: clamp(30px, 6vw, 80px); padding-top: 42px; }
+      .doc-nav { align-self: start; position: sticky; top: 20px; display: grid; gap: 10px; padding-top: 4px; color: var(--muted); font-size: 12px; }
+      .doc-nav a { width: fit-content; text-decoration: none; text-underline-offset: 4px; }
+      .doc-nav a:hover { color: var(--wine); text-decoration: underline; }
+      .content { min-width: 0; }
+      .doc-section { padding: 0 0 44px; margin-bottom: 42px; border-bottom: 1px solid var(--line); scroll-margin-top: 24px; }
+      .doc-section:last-child { margin-bottom: 0; border-bottom: 0; }
+      h2 { margin: 0 0 14px; font-size: clamp(2rem, 3vw, 3rem); line-height: .95; }
+      h3 { margin: 28px 0 10px; font-size: 1.35rem; line-height: 1.05; }
+      p, li { max-width: 700px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+      p { margin: 0 0 15px; }
+      p strong, li strong { color: var(--ink); font-weight: 650; }
+      .note { margin: 22px 0; padding: 16px 18px 16px 20px; border-left: 2px solid var(--gold); background: rgba(251, 248, 241, .58); }
+      .note p { margin: 0; }
+      .route { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: baseline; margin-top: 28px; }
+      .method { padding: 4px 6px; color: #fffaf3; background: var(--wine); font: 700 10px/1 var(--sans); letter-spacing: .1em; }
+      .route code { color: var(--ink); font-size: 15px; font-weight: 650; overflow-wrap: anywhere; }
+      pre { overflow-x: auto; margin: 18px 0 0; padding: 17px 18px; color: #f8f0e2; background: #2d2420; border-top: 2px solid var(--wine); font-size: 12px; line-height: 1.65; }
+      :not(pre) > code { padding: 2px 4px; color: var(--wine-dark); background: rgba(124, 45, 49, .08); font-size: .9em; }
+      .parameters { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 0 24px; margin: 22px 0 0; border-top: 1px solid var(--line); }
+      .parameters dt, .parameters dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .parameters dt { color: var(--wine); font: 700 12px/1.5 var(--sans); }
+      .parameters dd { color: var(--muted); font-size: 13px; line-height: 1.5; }
+      .inline-link { color: var(--wine); font-weight: 650; text-decoration-color: rgba(124, 45, 49, .45); text-underline-offset: 3px; }
+      .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 30px; padding: 26px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.6; }
+      .site-footer p { margin: 0; font-size: inherit; }
+      .footer-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+      .footer-links a { color: var(--ink); text-underline-offset: 3px; text-decoration-color: rgba(39, 32, 27, .35); }
+      .footer-links a:hover { color: var(--wine); text-decoration-color: currentColor; }
+      @media (max-width: 720px) { .site-header, main, .site-footer { width: min(100% - 32px, 1180px); } .site-nav { display: none; } .intro, .doc-layout { grid-template-columns: 1fr; gap: 30px; } .doc-nav { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 16px 0; border-bottom: 1px solid var(--line); } .parameters { grid-template-columns: 112px minmax(0, 1fr); gap: 0 14px; } }
+      @media (max-width: 430px) { .brand-subtitle { display: none; } .doc-nav { grid-template-columns: 1fr; } h1 { font-size: 3.5rem; } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#start">Skip to documentation</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Catholic Quotes API home"><span class="cross" aria-hidden="true"></span><span class="brand-copy"><span class="brand-name">Catholic Quotes API</span><span class="brand-subtitle">a cited commonplace for the Church</span></span></a>
+      <nav class="site-nav" aria-label="Site navigation"><a href="/">Archive</a><a href="/docs" aria-current="page">API documentation</a><a href="/api/docs">JSON description</a></nav>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div><p class="eyebrow">For people building with the archive</p><h1 id="page-title">A small, cited Catholic text API.</h1></div>
+        <p class="intro-copy"><strong>Read-only, no authentication required.</strong> Use the endpoints below to search English-language quotations and cited primary texts, while retaining the source and licence metadata attached to each record.</p>
+      </section>
+
+      <div class="doc-layout">
+        <nav class="doc-nav" aria-label="Documentation sections">
+          <a href="#start">Getting started</a><a href="#endpoints">Endpoints</a><a href="#query">Query parameters</a><a href="#records">Record format</a><a href="#sources">Sources &amp; licences</a>
+        </nav>
+        <div class="content">
+          <section class="doc-section" id="start">
+            <h2>Getting started</h2>
+            <p>Every route is available below the same domain as this page. The API returns compact UTF-8 JSON and permits cross-origin <code>GET</code> requests. There are no keys, accounts, or write operations.</p>
+            <div class="note"><p>Use <a class="inline-link" href="/api/health">/api/health</a> first to confirm that a deployment is available and to see the current record counts.</p></div>
+            <pre><code>GET /api/health
+
+{
+  "ok": true,
+  "language": "en",
+  "record_count": 6203,
+  "datasets": { "catena": 4858, "wikiquote": 1345 },
+  "croatian_sources_included": false
+}</code></pre>
+          </section>
+
+          <section class="doc-section" id="endpoints">
+            <h2>Endpoints</h2>
+            <p>The archive separates short attributed quotations from longer cited passages in primary Catholic texts.</p>
+            <div class="route"><span class="method">GET</span><code>/api/health</code></div><p>Availability, language, dataset counts, and the Croatian-source exclusion flag.</p>
+            <div class="route"><span class="method">GET</span><code>/api/quotes</code></div><p>Search and paginate records. This is the primary endpoint for applications.</p>
+            <div class="route"><span class="method">GET</span><code>/api/random</code></div><p>Return one record, optionally limited to a dataset.</p>
+            <div class="route"><span class="method">GET</span><code>/api/sources</code></div><p>Dataset labels, descriptions, and licence notes.</p>
+            <div class="route"><span class="method">GET</span><code>/api/saints</code></div><p>Wikiquote authors with the number of available quotations.</p>
+            <div class="route"><span class="method">GET</span><code>/api/docs</code></div><p>The concise machine-readable description of these endpoints.</p>
+          </section>
+
+          <section class="doc-section" id="query">
+            <h2>Query parameters</h2>
+            <p>Use these parameters with <code>/api/quotes</code>. The search matches the quotation text, author, collection, and citation. Multiple search words are combined, so a narrower query returns a narrower result set.</p>
+            <dl class="parameters">
+              <dt><code>source</code></dt><dd><strong>Optional.</strong> <code>all</code> (default), <code>wikiquote</code>, or <code>catena</code>.</dd>
+              <dt><code>q</code></dt><dd><strong>Optional.</strong> A search phrase; up to eight terms of two or more characters are used.</dd>
+              <dt><code>author</code></dt><dd><strong>Optional.</strong> Case-insensitive partial author match.</dd>
+              <dt><code>collection</code></dt><dd><strong>Optional.</strong> Case-insensitive partial collection match, useful for the Catena dataset.</dd>
+              <dt><code>limit</code></dt><dd><strong>Optional.</strong> Records per page; from <code>1</code> to <code>100</code>, default <code>25</code>.</dd>
+              <dt><code>offset</code></dt><dd><strong>Optional.</strong> Zero-based result offset, default <code>0</code>.</dd>
+            </dl>
+            <h3>Examples</h3>
+            <pre><code>GET /api/quotes?source=wikiquote&amp;author=Thomas%20Aquinas&amp;limit=5
+GET /api/quotes?q=mercy&amp;collection=Roman%20Catechism
+GET /api/random?source=catena</code></pre>
+          </section>
+
+          <section class="doc-section" id="records">
+            <h2>Record format</h2>
+            <p>Search responses include pagination fields and an <code>items</code> array. Some descriptive fields can be <code>null</code> when a source does not provide them.</p>
+            <pre><code>{
+  "source": "all",
+  "language": "en",
+  "count": 446,
+  "limit": 25,
+  "offset": 0,
+  "items": [{
+    "id": "…",
+    "dataset": "wikiquote | catena",
+    "text": "The quotation or cited passage.",
+    "author": "…",
+    "collection": "…",
+    "citation": "…",
+    "title": "…",
+    "work": "…",
+    "source": { "domain": "…", "url": "…" },
+    "license_note": "…",
+    "quote_type": "author_quote | canonical_text"
+  }]
+}</code></pre>
+            <p><code>canonical_text</code> is a cited excerpt from a primary work. <code>author_quote</code> is an attributed quotation gathered from the Wikiquote source set.</p>
+          </section>
+
+          <section class="doc-section" id="sources">
+            <h2>Sources &amp; licences</h2>
+            <p>The current snapshot contains English Wikiquote records and Catena units from the <em>Summa Theologiae</em>, <em>Catena Aurea</em>, and Roman Catechism. It deliberately excludes Croatian JSON, HKM, and Compendium data.</p>
+            <p>Attribution and licensing travel with each record, but you should still verify the underlying work and edition before republishing a quotation—especially translations and material obtained through Wikiquote.</p>
+            <p><a class="inline-link" href="/api/sources">View current source metadata →</a></p>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>Built as a careful way to find a passage and return to its source.</p>
+      <nav class="footer-links" aria-label="Project links"><a href="https://castelcode.hr" target="_blank" rel="noreferrer">Castelcode.hr ↗</a><a href="https://github.com/zcuric" target="_blank" rel="noreferrer">GitHub / zcuric ↗</a><a href="https://x.com/zcuric" target="_blank" rel="noreferrer">X / @zcuric ↗</a></nav>
+    </footer>
+  </body>
+</html>

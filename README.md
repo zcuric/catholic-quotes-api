@@ -28,6 +28,7 @@ It contains no Croatian JSON, HKM source, or Compendium `content.sqlite`.
 
 ## Routes
 
+- `/docs` — human-readable API documentation
 - `/api/health`
 - `/api/docs`
 - `/api/sources`
