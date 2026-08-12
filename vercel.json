@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/index.py": {
-      "includeFiles": "{data/international.sqlite3,index.html,docs.html}",
+      "includeFiles": "{data/international.sqlite3,index.html,docs.html,assets/buy-me-a-coffee-qr.png,assets/robert-arrington-catholic-interior.jpg}",
       "maxDuration": 10
     }
   },

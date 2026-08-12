@@ -9,11 +9,20 @@ it contains no Croatian JSON, HKM material, or Compendium database content.
 
 ## Links
 
-- [Browse the archive](https://github.com/zcuric/catholic-quotes-api)
-- [Human-readable API documentation](/docs)
+- [Browse the archive](https://catholic-quotes-api.vercel.app/)
+- [Human-readable API documentation](https://catholic-quotes-api.vercel.app/docs)
 - [Castelcode](https://castelcode.hr)
 - [GitHub: @zcuric](https://github.com/zcuric)
 - [X: @zcuric](https://x.com/zcuric)
+- [Support the archive on Buy Me a Coffee](https://buymeacoffee.com/zcuricy)
+
+## Support the archive
+
+If Catholic Quotes API is useful to you, you can support its ongoing care on
+[Buy Me a Coffee](https://buymeacoffee.com/zcuricy). Scan the QR code or open
+the link:
+
+[![QR code for Buy Me a Coffee support page](assets/buy-me-a-coffee-qr.png)](https://buymeacoffee.com/zcuricy)
 
 ## What is in the snapshot
 
@@ -36,13 +45,13 @@ and has no write operations.
 
 | Route | Purpose |
 | --- | --- |
-| [`/docs`](/docs) | Human-readable documentation |
-| [`/api/health`](/api/health) | Availability and record counts |
-| [`/api/docs`](/api/docs) | Compact JSON API description |
-| [`/api/quotes`](/api/quotes) | Search and paginate records |
-| [`/api/random`](/api/random) | One randomly selected record |
-| [`/api/sources`](/api/sources) | Dataset and licence metadata |
-| [`/api/saints`](/api/saints) | Available Wikiquote authors |
+| [`/docs`](https://catholic-quotes-api.vercel.app/docs) | Human-readable documentation |
+| [`/api/health`](https://catholic-quotes-api.vercel.app/api/health) | Availability and record counts |
+| [`/api/docs`](https://catholic-quotes-api.vercel.app/api/docs) | Compact JSON API description |
+| [`/api/quotes`](https://catholic-quotes-api.vercel.app/api/quotes) | Search and paginate records |
+| [`/api/random`](https://catholic-quotes-api.vercel.app/api/random) | One randomly selected record |
+| [`/api/sources`](https://catholic-quotes-api.vercel.app/api/sources) | Dataset and licence metadata |
+| [`/api/saints`](https://catholic-quotes-api.vercel.app/api/saints) | Available Wikiquote authors |
 
 The default is `source=wikiquote`. Select the longer source explicitly with
 `source=catena`; use `source=all` only when an application genuinely needs
@@ -56,7 +65,7 @@ GET /api/quotes?source=catena&full=1&limit=1
 GET /api/random?source=wikiquote
 ```
 
-See [`/docs`](/docs) for query parameters, response shape, and examples.
+See [the documentation](https://catholic-quotes-api.vercel.app/docs) for query parameters, response shape, and examples.
 
 ## Run locally
 

@@ -26,6 +26,10 @@ HTML_PAGES = {
     "/docs": "docs.html",
     "/docs.html": "docs.html",
 }
+BINARY_ASSETS = {
+    "/support-qr.png": ("assets/buy-me-a-coffee-qr.png", "image/png"),
+    "/robert-arrington-catholic-interior.jpg": ("assets/robert-arrington-catholic-interior.jpg", "image/jpeg"),
+}
 SENTENCE_BREAK = re.compile(r'(?<=[.!?])\s+(?=(?:[A-Z“"\']))')
 ANSWER_START = re.compile(r"\bI answer that\b", re.IGNORECASE)
 NON_QUOTE_OPENING = re.compile(r"^(?:objection|reply to objection|reply|on the contrary)\b", re.IGNORECASE)
@@ -274,6 +278,15 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _send_asset(self, asset_name: str, content_type: str) -> None:
+        body = (BASE_DIR / asset_name).read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "public, max-age=31536000, immutable")
+        self.end_headers()
+        self.wfile.write(body)
+
     def _send(self, payload: object, status: int = 200) -> None:
         body = json_bytes(payload)
         self.send_response(status)
@@ -294,6 +307,10 @@ class handler(BaseHTTPRequestHandler):
         page_name = HTML_PAGES.get(parsed.path)
         if page_name:
             self._send_html(page_name)
+            return
+        asset = BINARY_ASSETS.get(parsed.path)
+        if asset:
+            self._send_asset(*asset)
             return
         params = parse_qs(parsed.query)
         route = route_from(self.path, params)
