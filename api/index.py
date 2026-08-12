@@ -87,7 +87,7 @@ def route_from(path: str, params: dict[str, list[str]]) -> str:
 def handle(route: str, params: dict[str, list[str]]) -> dict:
     if route == "docs":
         return {
-            "name": "International Catholic Quotes API",
+            "name": "Catholic Quotes API",
             "language": "en",
             "sources": ["wikiquote", "catena"],
             "excluded": ["Croatian JSON sources", "HKM", "Compendium content.sqlite"],
