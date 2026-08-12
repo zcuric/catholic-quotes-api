@@ -99,7 +99,7 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
                 "/api/random": "one random record",
             },
             "query_parameters": {
-                "source": "all, wikiquote, or catena",
+                "source": "wikiquote (default), catena, or all",
                 "q": "full-text search",
                 "author": "Wikiquote author filter",
                 "collection": "Catena collection filter",
@@ -140,7 +140,7 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
             ).fetchall()
             return {"count": len(rows), "authors": [dict(row) for row in rows]}
 
-        source = params.get("source", ["all"])[0].strip().lower()
+        source = params.get("source", ["wikiquote"])[0].strip().lower()
         if source not in {"all", "wikiquote", "catena"}:
             raise ValueError("source must be all, wikiquote, or catena")
         limit = min(parse_int(params, "limit", 25, 1), MAX_LIMIT)

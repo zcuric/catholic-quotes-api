@@ -106,7 +106,7 @@
 
           <section class="doc-section" id="endpoints">
             <h2>Endpoints</h2>
-            <p>The archive separates short attributed quotations from longer cited passages in primary Catholic texts.</p>
+            <p>The archive separates short attributed quotations from longer cited passages in primary Catholic texts. Attributed quotations are the default response; request Catena only when your use case calls for longer excerpts.</p>
             <div class="route"><span class="method">GET</span><code>/api/health</code></div><p>Availability, language, dataset counts, and the Croatian-source exclusion flag.</p>
             <div class="route"><span class="method">GET</span><code>/api/quotes</code></div><p>Search and paginate records. This is the primary endpoint for applications.</p>
             <div class="route"><span class="method">GET</span><code>/api/random</code></div><p>Return one record, optionally limited to a dataset.</p>
@@ -119,7 +119,7 @@
             <h2>Query parameters</h2>
             <p>Use these parameters with <code>/api/quotes</code>. The search matches the quotation text, author, collection, and citation. Multiple search words are combined, so a narrower query returns a narrower result set.</p>
             <dl class="parameters">
-              <dt><code>source</code></dt><dd><strong>Optional.</strong> <code>all</code> (default), <code>wikiquote</code>, or <code>catena</code>.</dd>
+              <dt><code>source</code></dt><dd><strong>Optional.</strong> <code>wikiquote</code> (default) for attributed quotations; use <code>catena</code> for longer cited primary texts, or <code>all</code> for both.</dd>
               <dt><code>q</code></dt><dd><strong>Optional.</strong> A search phrase; up to eight terms of two or more characters are used.</dd>
               <dt><code>author</code></dt><dd><strong>Optional.</strong> Case-insensitive partial author match.</dd>
               <dt><code>collection</code></dt><dd><strong>Optional.</strong> Case-insensitive partial collection match, useful for the Catena dataset.</dd>
@@ -136,7 +136,7 @@ GET /api/random?source=catena</code></pre>
             <h2>Record format</h2>
             <p>Search responses include pagination fields and an <code>items</code> array. Some descriptive fields can be <code>null</code> when a source does not provide them.</p>
             <pre><code>{
-  "source": "all",
+  "source": "wikiquote",
   "language": "en",
   "count": 446,
   "limit": 25,
