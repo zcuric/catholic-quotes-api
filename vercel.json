@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/index.py": {
-      "includeFiles": "data/international.sqlite3",
+      "includeFiles": ["data/international.sqlite3", "index.html", "docs.html"],
       "maxDuration": 10
     }
   },

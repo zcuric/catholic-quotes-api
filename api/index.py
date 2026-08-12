@@ -20,6 +20,12 @@ DB_PATH = BASE_DIR / "data" / "international.sqlite3"
 MAX_LIMIT = 100
 CATENA_EXCERPT_LIMIT = 560
 ROUTES = {"health", "sources", "saints", "quotes", "random", "docs"}
+HTML_PAGES = {
+    "/": "index.html",
+    "/index.html": "index.html",
+    "/docs": "docs.html",
+    "/docs.html": "docs.html",
+}
 SENTENCE_BREAK = re.compile(r'(?<=[.!?])\s+(?=(?:[A-Z“"\']))')
 ANSWER_START = re.compile(r"\bI answer that\b", re.IGNORECASE)
 NON_QUOTE_OPENING = re.compile(r"^(?:objection|reply to objection|reply|on the contrary)\b", re.IGNORECASE)
@@ -259,6 +265,15 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
 class handler(BaseHTTPRequestHandler):
     """Vercel's Python runtime discovers this handler class automatically."""
 
+    def _send_html(self, page_name: str) -> None:
+        body = (BASE_DIR / page_name).read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "public, max-age=0, must-revalidate")
+        self.end_headers()
+        self.wfile.write(body)
+
     def _send(self, payload: object, status: int = 200) -> None:
         body = json_bytes(payload)
         self.send_response(status)
@@ -275,7 +290,12 @@ class handler(BaseHTTPRequestHandler):
         self._send({}, 204)
 
     def do_GET(self) -> None:  # noqa: N802 - stdlib API
-        params = parse_qs(urlparse(self.path).query)
+        parsed = urlparse(self.path)
+        page_name = HTML_PAGES.get(parsed.path)
+        if page_name:
+            self._send_html(page_name)
+            return
+        params = parse_qs(parsed.query)
         route = route_from(self.path, params)
         if not route:
             self._send({"error": "not found", "docs": "/api/docs"}, 404)

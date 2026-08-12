@@ -4,29 +4,11 @@
 from __future__ import annotations
 
 from http.server import ThreadingHTTPServer
-from pathlib import Path
-from urllib.parse import urlparse
-
 from api.index import handler as ApiHandler
 
 
-ROOT = Path(__file__).resolve().parent
-
-
 class LocalHandler(ApiHandler):
-    def do_GET(self) -> None:  # noqa: N802 - stdlib handler API
-        path = urlparse(self.path).path
-        pages = {"/": "index.html", "/index.html": "index.html", "/docs": "docs.html", "/docs.html": "docs.html"}
-        page = pages.get(path)
-        if page:
-            body = (ROOT / page).read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
-        super().do_GET()
+    """Keep the local server on the same request path as Vercel's handler."""
 
 
 if __name__ == "__main__":
