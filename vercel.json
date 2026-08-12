@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "data/international.sqlite3",
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api", "destination": "/api/index.py?route=health" },
+    { "source": "/api/health", "destination": "/api/index.py?route=health" },
+    { "source": "/api/docs", "destination": "/api/index.py?route=docs" },
+    { "source": "/api/sources", "destination": "/api/index.py?route=sources" },
+    { "source": "/api/saints", "destination": "/api/index.py?route=saints" },
+    { "source": "/api/quotes", "destination": "/api/index.py?route=quotes" },
+    { "source": "/api/random", "destination": "/api/index.py?route=random" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=300, stale-while-revalidate=86400" }
+      ]
+    }
+  ]
+}

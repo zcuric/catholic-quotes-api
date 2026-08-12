@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.vercel/
+.env
+.env.*
+!.env.example

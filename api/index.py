@@ -1,0 +1,227 @@
+"""Read-only Vercel Python API for the international quote snapshot.
+
+This function deliberately opens only ``vercel_app/data/international.sqlite3``.
+It never reads the repository's Croatian JSON files, HKM sources, or the
+Compendium database.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import sqlite3
+from http.server import BaseHTTPRequestHandler
+from pathlib import Path
+from urllib.parse import parse_qs, urlparse
+
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+DB_PATH = BASE_DIR / "data" / "international.sqlite3"
+MAX_LIMIT = 100
+ROUTES = {"health", "sources", "saints", "quotes", "random", "docs"}
+
+
+def connect() -> sqlite3.Connection:
+    if not DB_PATH.is_file():
+        raise FileNotFoundError(f"database not bundled: {DB_PATH}")
+    connection = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+    connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA query_only = 1")
+    return connection
+
+
+def json_bytes(payload: object) -> bytes:
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+
+
+def source_object(row: sqlite3.Row) -> dict:
+    return {
+        "domain": row["source_domain"],
+        "url": row["source_url"],
+    }
+
+
+def quote_object(row: sqlite3.Row) -> dict:
+    return {
+        "id": row["id"],
+        "dataset": row["dataset"],
+        "text": row["text"],
+        "language": row["language"],
+        "author": row["author"],
+        "collection": row["collection"],
+        "source_category": row["source_category"],
+        "citation": row["citation"],
+        "title": row["title"],
+        "work": row["work"],
+        "source": source_object(row),
+        "license_note": row["license_note"],
+        "quote_type": row["quote_type"],
+    }
+
+
+def parse_int(params: dict[str, list[str]], key: str, default: int, minimum: int = 0) -> int:
+    try:
+        value = int(params.get(key, [str(default)])[0])
+    except ValueError as exc:
+        raise ValueError(f"{key} must be an integer") from exc
+    return max(value, minimum)
+
+
+def search_terms(value: str) -> list[str]:
+    # Keep search independent of optional SQLite extensions.  The snapshot is
+    # only 6,203 records, so a bounded AND-of-LIKE query is fast and works on
+    # the standard Vercel Python runtime as well as local SQLite builds.
+    return re.findall(r"[\wÀ-ž]{2,}", value, flags=re.UNICODE)[:8]
+
+
+def route_from(path: str, params: dict[str, list[str]]) -> str:
+    explicit = params.get("route", [""])[0].strip().lower()
+    if explicit in ROUTES:
+        return explicit
+    pieces = [piece for piece in urlparse(path).path.split("/") if piece]
+    if pieces and pieces[-1].removesuffix(".py") in ROUTES:
+        return pieces[-1].removesuffix(".py")
+    return "health" if not pieces or pieces[-1] in {"api", "index.py"} else ""
+
+
+def handle(route: str, params: dict[str, list[str]]) -> dict:
+    if route == "docs":
+        return {
+            "name": "International Catholic Quotes API",
+            "language": "en",
+            "sources": ["wikiquote", "catena"],
+            "excluded": ["Croatian JSON sources", "HKM", "Compendium content.sqlite"],
+            "endpoints": {
+                "/api/health": "status and record counts",
+                "/api/sources": "source and license metadata",
+                "/api/saints": "Wikiquote authors",
+                "/api/quotes": "paginated search",
+                "/api/random": "one random record",
+            },
+            "query_parameters": {
+                "source": "all, wikiquote, or catena",
+                "q": "full-text search",
+                "author": "Wikiquote author filter",
+                "collection": "Catena collection filter",
+                "limit": "1-100, default 25",
+                "offset": "zero-based, default 0",
+            },
+        }
+
+    connection = connect()
+    try:
+        if route == "health":
+            counts = {
+                row["dataset"]: row["count"]
+                for row in connection.execute("SELECT dataset, COUNT(*) AS count FROM quotes GROUP BY dataset")
+            }
+            return {
+                "ok": True,
+                "language": "en",
+                "record_count": sum(counts.values()),
+                "datasets": counts,
+                "croatian_sources_included": False,
+            }
+
+        if route == "sources":
+            rows = connection.execute(
+                "SELECT id, label, description, license_note FROM sources WHERE id != 'meta' ORDER BY id"
+            ).fetchall()
+            return {"sources": [dict(row) for row in rows]}
+
+        if route == "saints":
+            rows = connection.execute(
+                """
+                SELECT author, COUNT(*) AS quote_count
+                FROM quotes
+                WHERE dataset = 'wikiquote' AND author IS NOT NULL AND author != ''
+                GROUP BY author ORDER BY lower(author)
+                """
+            ).fetchall()
+            return {"count": len(rows), "authors": [dict(row) for row in rows]}
+
+        source = params.get("source", ["all"])[0].strip().lower()
+        if source not in {"all", "wikiquote", "catena"}:
+            raise ValueError("source must be all, wikiquote, or catena")
+        limit = min(parse_int(params, "limit", 25, 1), MAX_LIMIT)
+        offset = parse_int(params, "offset", 0)
+        conditions: list[str] = []
+        values: list[object] = []
+        if source != "all":
+            conditions.append("q.dataset = ?")
+            values.append(source)
+        query = params.get("q", [""])[0].strip()
+        if query:
+            for term in search_terms(query):
+                conditions.append(
+                    "(lower(q.text) LIKE lower(?) OR lower(coalesce(q.author, '')) LIKE lower(?) "
+                    "OR lower(coalesce(q.collection, '')) LIKE lower(?) OR lower(coalesce(q.citation, '')) LIKE lower(?))"
+                )
+                pattern = f"%{term}%"
+                values.extend([pattern, pattern, pattern, pattern])
+        author = params.get("author", [""])[0].strip()
+        if author:
+            conditions.append("lower(q.author) LIKE lower(?)")
+            values.append(f"%{author}%")
+        collection = params.get("collection", [""])[0].strip()
+        if collection:
+            conditions.append("lower(q.collection) LIKE lower(?)")
+            values.append(f"%{collection}%")
+        where = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+        total = connection.execute(f"SELECT COUNT(*) FROM quotes q {where}", values).fetchone()[0]
+        if route == "random":
+            rows = connection.execute(
+                f"SELECT q.* FROM quotes q {where} ORDER BY RANDOM() LIMIT 1", values
+            ).fetchall()
+            return {"source": source, "count": total, "item": quote_object(rows[0]) if rows else None}
+        if route != "quotes":
+            raise ValueError("unknown route")
+        rows = connection.execute(
+            f"SELECT q.* FROM quotes q {where} ORDER BY q.dataset, q.author COLLATE NOCASE, q.rowid LIMIT ? OFFSET ?",
+            [*values, limit, offset],
+        ).fetchall()
+        return {
+            "source": source,
+            "language": "en",
+            "count": total,
+            "limit": limit,
+            "offset": offset,
+            "items": [quote_object(row) for row in rows],
+        }
+    finally:
+        connection.close()
+
+
+class handler(BaseHTTPRequestHandler):
+    """Vercel's Python runtime discovers this handler class automatically."""
+
+    def _send(self, payload: object, status: int = 200) -> None:
+        body = json_bytes(payload)
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Cache-Control", "public, s-maxage=300, stale-while-revalidate=86400")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_OPTIONS(self) -> None:  # noqa: N802 - stdlib API
+        self._send({}, 204)
+
+    def do_GET(self) -> None:  # noqa: N802 - stdlib API
+        params = parse_qs(urlparse(self.path).query)
+        route = route_from(self.path, params)
+        if not route:
+            self._send({"error": "not found", "docs": "/api/docs"}, 404)
+            return
+        try:
+            self._send(handle(route, params))
+        except ValueError as exc:
+            self._send({"error": str(exc)}, 400)
+        except Exception as exc:  # keep the public response JSON-shaped
+            self._send({"error": "internal server error", "detail": str(exc)}, 500)
+
+    def log_message(self, format: str, *args) -> None:
+        return

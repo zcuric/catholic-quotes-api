@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A cited, English-language archive of Catholic author quotations and primary texts." />
+    <title>Commonplace — Catholic quote archive</title>
+    <style>
+      :root {
+        --ink: #111216;
+        --paper: #f1eee7;
+        --muted: #77746d;
+        --line: rgba(17, 18, 22, .14);
+        --accent: #cf5b3f;
+        --accent-dark: #963d2b;
+        --serif: Georgia, 'Times New Roman', serif;
+        --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      * { box-sizing: border-box; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+      body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--sans); }
+      header { max-width: 1240px; margin: 0 auto; padding: 28px 34px 0; display: flex; justify-content: space-between; align-items: center; }
+      .mark { display: flex; gap: 12px; align-items: center; font: 700 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; }
+      .mark-dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+      .status { color: var(--muted); font: 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+      .status[data-state='error'] { color: var(--accent-dark); }
+      main { max-width: 1240px; margin: 0 auto; padding: 62px 34px 90px; }
+      .hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); gap: 60px; align-items: end; padding-bottom: 62px; border-bottom: 1px solid var(--line); }
+      h1 { max-width: 760px; margin: 0; font: 500 clamp(3.2rem, 8vw, 7.4rem)/.88 var(--serif); letter-spacing: -.065em; }
+      .hero-note { max-width: 300px; margin: 0 0 4px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+      .hero-note strong { display: block; margin-bottom: 14px; color: var(--ink); font: 700 11px/1.2 var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+      .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--line); }
+      input, select, button { border: 1px solid var(--line); border-radius: 3px; background: transparent; color: var(--ink); font: 14px var(--sans); }
+      input { min-width: 250px; padding: 12px 13px; }
+      select, button { padding: 12px 14px; cursor: pointer; }
+      input:focus, select:focus, button:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+      button { border-color: var(--ink); background: var(--ink); color: var(--paper); transition: transform .16s ease, background .16s ease; }
+      button:hover { background: var(--accent-dark); }
+      button:active { transform: translateY(1px); }
+      .meta { margin-left: auto; color: var(--muted); font: 12px var(--sans); }
+      .results { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 24px; }
+      .result { grid-column: span 6; padding: 30px 0 34px; border-bottom: 1px solid var(--line); }
+      .result:nth-child(3n) { grid-column: 2 / span 6; }
+      .result-label { display: flex; justify-content: space-between; gap: 15px; color: var(--muted); font: 10px/1.3 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
+      blockquote { margin: 18px 0 20px; font: 400 clamp(1.35rem, 2.1vw, 2rem)/1.16 var(--serif); letter-spacing: -.025em; }
+      .citation { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+      .citation a { color: var(--accent-dark); }
+      .empty { grid-column: 1 / -1; padding: 60px 0; color: var(--muted); font: 1.3rem var(--serif); }
+      .pager { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; }
+      .pager button { background: transparent; color: var(--ink); border-color: var(--line); }
+      .pager button:disabled { cursor: not-allowed; opacity: .35; }
+      footer { max-width: 1240px; margin: 0 auto; padding: 0 34px 34px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+      @media (max-width: 760px) {
+        header { padding: 22px 20px 0; }
+        main { padding: 52px 20px 65px; }
+        .hero { grid-template-columns: 1fr; gap: 28px; padding-bottom: 42px; }
+        h1 { font-size: clamp(3.5rem, 17vw, 6rem); }
+        .hero-note { max-width: 100%; }
+        .toolbar { align-items: stretch; }
+        input { min-width: 0; flex: 1 1 100%; }
+        .meta { width: 100%; margin-left: 0; }
+        .result, .result:nth-child(3n) { grid-column: 1 / -1; }
+        footer { padding: 0 20px 24px; }
+      }
+      @media (prefers-reduced-motion: reduce) { button { transition: none; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="mark"><span class="mark-dot"></span> Commonplace / source archive</div>
+      <div class="status" id="status">connecting</div>
+    </header>
+    <main>
+      <section class="hero">
+        <h1>Words worth<br />keeping.</h1>
+        <p class="hero-note"><strong>International Catholic archive</strong>English quotations and cited primary texts, kept close to their source. Search by author, collection, or idea.</p>
+      </section>
+      <section class="toolbar" aria-label="Quote search">
+        <label class="sr-only" for="search">Search the archive</label>
+        <input id="search" type="search" placeholder="Search mercy, prayer, truth…" autocomplete="off" />
+        <label class="sr-only" for="source">Source</label>
+        <select id="source"><option value="all">All sources</option><option value="wikiquote">Wikiquote authors</option><option value="catena">Catena texts</option></select>
+        <button id="random" type="button">Surprise me</button>
+        <span class="meta" id="count">—</span>
+      </section>
+      <section class="results" id="results" aria-live="polite"></section>
+      <nav class="pager" aria-label="Pagination">
+        <button id="previous" type="button">Previous</button>
+        <span class="meta" id="page">Page 1</span>
+        <button id="next" type="button">Next</button>
+      </nav>
+    </main>
+    <footer>Source and license metadata travels with every record. This public archive contains English Wikiquote and Catena material only; Croatian/HKM sources are not part of this deployment.</footer>
+    <script>
+      const state = { offset: 0, limit: 10, count: 0 };
+      const API_BASE = window.location.protocol === 'file:' ? 'http://127.0.0.1:8787/api' : '/api';
+      const results = document.getElementById('results');
+      const status = document.getElementById('status');
+      const count = document.getElementById('count');
+      const page = document.getElementById('page');
+      const source = document.getElementById('source');
+      const search = document.getElementById('search');
+      const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      function render(items) {
+        if (!items.length) { results.innerHTML = '<div class="empty">Nothing found. Try a wider phrase or another source.</div>'; return; }
+        results.innerHTML = items.map((item) => {
+          const label = item.dataset === 'wikiquote' ? (item.author || 'Unknown author') : (item.collection || 'Catena');
+          const detail = item.citation || item.title || item.work || item.source_category || '';
+          const sourceLink = item.source?.url ? `<a href="${esc(item.source.url)}" target="_blank" rel="noreferrer">source ↗</a>` : '';
+          return `<article class="result"><div class="result-label"><span>${esc(label)}</span><span>${esc(item.quote_type === 'canonical_text' ? 'canonical text' : 'quotation')}</span></div><blockquote>“${esc(item.text)}”</blockquote><p class="citation">${esc(detail)} ${sourceLink}</p></article>`;
+        }).join('');
+      }
+      async function load() {
+        status.textContent = 'loading'; status.dataset.state = '';
+        const query = new URLSearchParams({ source: source.value, q: search.value, limit: state.limit, offset: state.offset });
+        try {
+          const response = await fetch(`${API_BASE}/quotes?${query}`, { headers: { Accept: 'application/json' } });
+          if (!response.ok) throw new Error(`Request failed (${response.status})`);
+          const data = await response.json(); state.count = data.count; render(data.items);
+          count.textContent = `${data.count.toLocaleString()} records`;
+          page.textContent = `Page ${Math.floor(state.offset / state.limit) + 1}`;
+          document.getElementById('previous').disabled = state.offset === 0;
+          document.getElementById('next').disabled = state.offset + state.limit >= data.count;
+          status.textContent = 'online';
+        } catch (error) {
+          status.textContent = 'offline'; status.dataset.state = 'error';
+          const hint = window.location.protocol === 'file:' ? 'Run <code>python3 local_server.py</code> inside <code>vercel_app</code>, then open <code>http://127.0.0.1:8787</code>.' : 'Check the Vercel deployment and its Function logs.';
+          results.innerHTML = `<div class="empty">${esc(error.message)}. The API is not reachable yet.<br /><small>${hint}</small></div>`;
+        }
+      }
+      let timer;
+      search.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { state.offset = 0; load(); }, 260); });
+      source.addEventListener('change', () => { state.offset = 0; load(); });
+      document.getElementById('previous').addEventListener('click', () => { state.offset = Math.max(0, state.offset - state.limit); load(); });
+      document.getElementById('next').addEventListener('click', () => { if (state.offset + state.limit < state.count) { state.offset += state.limit; load(); } });
+      document.getElementById('random').addEventListener('click', async () => { const response = await fetch(`${API_BASE}/random?source=${source.value}`); const data = await response.json(); if (data.item) { search.value = ''; render([data.item]); count.textContent = 'one selected record'; page.textContent = 'Random'; } });
+      load();
+    </script>
+  </body>
+</html>
