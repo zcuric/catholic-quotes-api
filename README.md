@@ -20,12 +20,14 @@ it contains no Croatian JSON, HKM material, or Compendium database content.
 The checked-in, read-only SQLite database currently contains:
 
 - 1,345 English attributed quotations from Catholic-author Wikiquote pages;
-- 4,858 longer, canonically cited Catena units from the *Summa Theologiae*,
+- 4,858 canonically cited Catena units from the *Summa Theologiae*,
   *Catena Aurea*, and Roman Catechism.
 
 Attributed quotations are the default in both the website and the API. Catena
-records are deliberately opt-in because they are longer excerpts intended for
-reading in context.
+records are deliberately opt-in. By default, the API returns concise,
+complete-sentence Catena excerpts (up to about 560 characters) while retaining
+the canonical citation and source URL. Request `full=1` when an application
+needs the entire cited source unit.
 
 ## Use the API
 
@@ -50,6 +52,7 @@ both collections.
 GET /api/quotes?q=mercy&limit=10
 GET /api/quotes?source=wikiquote&author=Thomas%20Aquinas
 GET /api/quotes?source=catena&collection=Roman%20Catechism&limit=5
+GET /api/quotes?source=catena&full=1&limit=1
 GET /api/random?source=wikiquote
 ```
 

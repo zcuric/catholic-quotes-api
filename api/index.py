@@ -18,7 +18,12 @@ from urllib.parse import parse_qs, urlparse
 BASE_DIR = Path(__file__).resolve().parents[1]
 DB_PATH = BASE_DIR / "data" / "international.sqlite3"
 MAX_LIMIT = 100
+CATENA_EXCERPT_LIMIT = 560
 ROUTES = {"health", "sources", "saints", "quotes", "random", "docs"}
+SENTENCE_BREAK = re.compile(r'(?<=[.!?])\s+(?=(?:[A-Z“"\']))')
+ANSWER_START = re.compile(r"\bI answer that\b", re.IGNORECASE)
+NON_QUOTE_OPENING = re.compile(r"^(?:objection|reply to objection|reply|on the contrary)\b", re.IGNORECASE)
+SENTENCE_OPENING = re.compile(r"^(?:[“\"']?[A-Z]|\([A-Z])")
 
 
 def connect() -> sqlite3.Connection:
@@ -41,11 +46,67 @@ def source_object(row: sqlite3.Row) -> dict:
     }
 
 
-def quote_object(row: sqlite3.Row) -> dict:
+def concise_catena_excerpt(raw_text: str) -> str:
+    """Return a complete-sentence excerpt while preserving the cited source unit.
+
+    Some Catena rows are whole articles rather than short passages. For those,
+    prefer Aquinas's ``I answer that`` section, then return one or more complete
+    sentences within the display limit. The full source unit remains available
+    with ``full=1``.
+    """
+    text = " ".join(raw_text.split())
+    if len(text) <= CATENA_EXCERPT_LIMIT:
+        return text
+
+    answer = ANSWER_START.search(text)
+    preferred_start = answer is not None
+    if answer:
+        text = text[answer.start():]
+
+    sentences = [sentence.strip() for sentence in SENTENCE_BREAK.split(text) if sentence.strip()]
+    if not sentences:
+        return text[: CATENA_EXCERPT_LIMIT - 1].rstrip() + "…"
+
+    if preferred_start:
+        start_index = 0
+    else:
+        start_index = next(
+            (
+                index
+                for index, sentence in enumerate(sentences)
+                if len(sentence) >= 80
+                and SENTENCE_OPENING.match(sentence)
+                and not NON_QUOTE_OPENING.match(sentence)
+            ),
+            0,
+        )
+
+    selected: list[str] = []
+    for sentence in sentences[start_index:]:
+        proposed = " ".join([*selected, sentence])
+        if len(proposed) > CATENA_EXCERPT_LIMIT:
+            if not selected:
+                boundary = sentence.rfind(" ", 0, CATENA_EXCERPT_LIMIT - 1)
+                return sentence[: boundary if boundary > 100 else CATENA_EXCERPT_LIMIT - 1].rstrip(" ,;:") + "…"
+            break
+        selected.append(sentence)
+    return " ".join(selected) if selected else text[: CATENA_EXCERPT_LIMIT - 1].rstrip() + "…"
+
+
+def wants_full_text(params: dict[str, list[str]]) -> bool:
+    return params.get("full", [""])[0].strip().lower() in {"1", "true", "yes"}
+
+
+def quote_object(row: sqlite3.Row, full_text: bool = False) -> dict:
+    text = row["text"]
+    is_excerpt = False
+    if row["dataset"] == "catena" and not full_text:
+        text = concise_catena_excerpt(text)
+        is_excerpt = text != row["text"]
     return {
         "id": row["id"],
         "dataset": row["dataset"],
-        "text": row["text"],
+        "text": text,
         "language": row["language"],
         "author": row["author"],
         "collection": row["collection"],
@@ -56,6 +117,7 @@ def quote_object(row: sqlite3.Row) -> dict:
         "source": source_object(row),
         "license_note": row["license_note"],
         "quote_type": row["quote_type"],
+        "is_excerpt": is_excerpt,
     }
 
 
@@ -103,6 +165,7 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
                 "q": "full-text search",
                 "author": "Wikiquote author filter",
                 "collection": "Catena collection filter",
+                "full": "set to 1, true, or yes to return full Catena source units",
                 "limit": "1-100, default 25",
                 "offset": "zero-based, default 0",
             },
@@ -150,6 +213,7 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
         if source != "all":
             conditions.append("q.dataset = ?")
             values.append(source)
+        full_text = wants_full_text(params)
         query = params.get("q", [""])[0].strip()
         if query:
             for term in search_terms(query):
@@ -173,7 +237,7 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
             rows = connection.execute(
                 f"SELECT q.* FROM quotes q {where} ORDER BY RANDOM() LIMIT 1", values
             ).fetchall()
-            return {"source": source, "count": total, "item": quote_object(rows[0]) if rows else None}
+            return {"source": source, "count": total, "item": quote_object(rows[0], full_text) if rows else None}
         if route != "quotes":
             raise ValueError("unknown route")
         rows = connection.execute(
@@ -186,7 +250,7 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
             "count": total,
             "limit": limit,
             "offset": offset,
-            "items": [quote_object(row) for row in rows],
+            "items": [quote_object(row, full_text) for row in rows],
         }
     finally:
         connection.close()

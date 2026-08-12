@@ -171,13 +171,13 @@
       <section class="archive" id="archive" aria-labelledby="archive-title">
         <div class="archive-heading">
           <h2 id="archive-title">The archive</h2>
-          <p class="archive-note">Attributed quotations appear first. For longer cited passages from primary works, choose <strong>Primary texts (Catena)</strong>.</p>
+          <p class="archive-note">Attributed quotations appear first. <strong>Catena excerpts</strong> are concise passages from cited primary works; each links to its complete source.</p>
         </div>
         <section class="toolbar" aria-label="Search the archive">
           <label class="sr-only" for="search">Search the archive</label>
           <input id="search" type="search" placeholder="Search mercy, prayer, grace…" autocomplete="off" />
           <label class="sr-only" for="source">Choose a source type</label>
-          <select id="source"><option value="wikiquote" selected>Attributed quotations</option><option value="catena">Primary texts (Catena)</option><option value="all">All records</option></select>
+          <select id="source"><option value="wikiquote" selected>Attributed quotations</option><option value="catena">Concise Catena excerpts</option><option value="all">All records</option></select>
           <button id="random" type="button">Open a passage</button>
           <span class="meta" id="count">—</span>
         </section>
@@ -218,7 +218,7 @@
         results.innerHTML = items.map((item) => {
           const label = item.dataset === 'wikiquote' ? (item.author || 'Unknown author') : (item.collection || 'Catholic text');
           const detail = item.citation || item.title || item.work || item.source_category || '';
-          const recordType = item.quote_type === 'canonical_text' ? 'primary text' : 'quotation';
+          const recordType = item.is_excerpt ? 'primary excerpt' : (item.quote_type === 'canonical_text' ? 'primary text' : 'quotation');
           const sourceLink = item.source?.url ? `<a href="${esc(item.source.url)}" target="_blank" rel="noreferrer">view source ↗</a>` : '';
           return `<article class="result"><div class="result-label"><span>${esc(label)}</span><span>${recordType}</span></div><blockquote>“${esc(item.text)}”</blockquote><p class="citation"><span>${esc(detail)}</span>${sourceLink}</p></article>`;
         }).join('');

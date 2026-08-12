@@ -106,7 +106,7 @@
 
           <section class="doc-section" id="endpoints">
             <h2>Endpoints</h2>
-            <p>The archive separates short attributed quotations from longer cited passages in primary Catholic texts. Attributed quotations are the default response; request Catena only when your use case calls for longer excerpts.</p>
+            <p>The archive separates short attributed quotations from cited passages in primary Catholic texts. Attributed quotations are the default response. Catena responses are concise, complete-sentence excerpts with the canonical citation and original source link retained.</p>
             <div class="route"><span class="method">GET</span><code>/api/health</code></div><p>Availability, language, dataset counts, and the Croatian-source exclusion flag.</p>
             <div class="route"><span class="method">GET</span><code>/api/quotes</code></div><p>Search and paginate records. This is the primary endpoint for applications.</p>
             <div class="route"><span class="method">GET</span><code>/api/random</code></div><p>Return one record, optionally limited to a dataset.</p>
@@ -123,13 +123,15 @@
               <dt><code>q</code></dt><dd><strong>Optional.</strong> A search phrase; up to eight terms of two or more characters are used.</dd>
               <dt><code>author</code></dt><dd><strong>Optional.</strong> Case-insensitive partial author match.</dd>
               <dt><code>collection</code></dt><dd><strong>Optional.</strong> Case-insensitive partial collection match, useful for the Catena dataset.</dd>
+              <dt><code>full</code></dt><dd><strong>Optional.</strong> Catena is concise by default. Set <code>full=1</code>, <code>full=true</code>, or <code>full=yes</code> to return the complete cited source unit.</dd>
               <dt><code>limit</code></dt><dd><strong>Optional.</strong> Records per page; from <code>1</code> to <code>100</code>, default <code>25</code>.</dd>
               <dt><code>offset</code></dt><dd><strong>Optional.</strong> Zero-based result offset, default <code>0</code>.</dd>
             </dl>
             <h3>Examples</h3>
             <pre><code>GET /api/quotes?source=wikiquote&amp;author=Thomas%20Aquinas&amp;limit=5
 GET /api/quotes?q=mercy&amp;collection=Roman%20Catechism
-GET /api/random?source=catena</code></pre>
+GET /api/random?source=catena
+GET /api/quotes?source=catena&amp;full=1&amp;limit=1</code></pre>
           </section>
 
           <section class="doc-section" id="records">
@@ -152,10 +154,11 @@ GET /api/random?source=catena</code></pre>
     "work": "…",
     "source": { "domain": "…", "url": "…" },
     "license_note": "…",
-    "quote_type": "author_quote | canonical_text"
+    "quote_type": "author_quote | canonical_text",
+    "is_excerpt": false
   }]
 }</code></pre>
-            <p><code>canonical_text</code> is a cited excerpt from a primary work. <code>author_quote</code> is an attributed quotation gathered from the Wikiquote source set.</p>
+            <p><code>canonical_text</code> is a cited excerpt from a primary work. <code>author_quote</code> is an attributed quotation gathered from the Wikiquote source set. <code>is_excerpt</code> is <code>true</code> when a long Catena source unit has been reduced to a complete-sentence excerpt; request <code>full=1</code> to obtain the original unit.</p>
           </section>
 
           <section class="doc-section" id="sources">
