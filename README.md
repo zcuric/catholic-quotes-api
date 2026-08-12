@@ -35,12 +35,7 @@ It contains no Croatian JSON, HKM source, or Compendium `content.sqlite`.
 - `/api/quotes?source=all&q=mercy&limit=25`
 - `/api/random?source=wikiquote`
 
-When the source corpus changes, regenerate the snapshot from the original
-data project with:
-
-```bash
-python3 build_international_sqlite.py
-```
-
-The resulting `data/international.sqlite3` is committed here so deployment
-does not depend on the source project or on a build-time database download.
+When the source corpus changes, regenerate the snapshot with the
+`build_international_sqlite.py` script in the original data project, then
+replace the checked-in `data/international.sqlite3`. Deployment does not
+depend on the source project or on a build-time database download.
