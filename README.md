@@ -4,9 +4,6 @@ A small, read-only API for finding English-language Catholic quotations and
 cited primary texts. Each response keeps the attribution, source URL, and
 licence note supplied by its source.
 
-The public archive is intentionally separate from the Croatian scraper project:
-it contains no Croatian JSON, HKM material, or Compendium database content.
-
 ## Links
 
 - [Browse the archive](https://catholic-quotes-api.vercel.app/)

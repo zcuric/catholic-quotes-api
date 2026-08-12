@@ -1,8 +1,6 @@
 """Read-only Vercel Python API for the international quote snapshot.
 
 This function deliberately opens only ``vercel_app/data/international.sqlite3``.
-It never reads the repository's Croatian JSON files, HKM sources, or the
-Compendium database.
 """
 
 from __future__ import annotations
@@ -162,7 +160,6 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
             "name": "Catholic Quotes API",
             "language": "en",
             "sources": ["wikiquote", "catena"],
-            "excluded": ["Croatian JSON sources", "HKM", "Compendium content.sqlite"],
             "endpoints": {
                 "/api/health": "status and record counts",
                 "/api/sources": "source and license metadata",
@@ -193,7 +190,6 @@ def handle(route: str, params: dict[str, list[str]]) -> dict:
                 "language": "en",
                 "record_count": sum(counts.values()),
                 "datasets": counts,
-                "croatian_sources_included": False,
             }
 
         if route == "sources":

@@ -99,15 +99,14 @@
   "ok": true,
   "language": "en",
   "record_count": 6203,
-  "datasets": { "catena": 4858, "wikiquote": 1345 },
-  "croatian_sources_included": false
+  "datasets": { "catena": 4858, "wikiquote": 1345 }
 }</code></pre>
           </section>
 
           <section class="doc-section" id="endpoints">
             <h2>Endpoints</h2>
             <p>The archive separates short attributed quotations from cited passages in primary Catholic texts. Attributed quotations are the default response. Catena responses are concise, complete-sentence excerpts with the canonical citation and original source link retained.</p>
-            <div class="route"><span class="method">GET</span><code>/api/health</code></div><p>Availability, language, dataset counts, and the Croatian-source exclusion flag.</p>
+            <div class="route"><span class="method">GET</span><code>/api/health</code></div><p>Availability, language, and dataset counts.</p>
             <div class="route"><span class="method">GET</span><code>/api/quotes</code></div><p>Search and paginate records. This is the primary endpoint for applications.</p>
             <div class="route"><span class="method">GET</span><code>/api/random</code></div><p>Return one record, optionally limited to a dataset.</p>
             <div class="route"><span class="method">GET</span><code>/api/sources</code></div><p>Dataset labels, descriptions, and licence notes.</p>
@@ -163,7 +162,7 @@ GET /api/quotes?source=catena&amp;full=1&amp;limit=1</code></pre>
 
           <section class="doc-section" id="sources">
             <h2>Sources &amp; licences</h2>
-            <p>The current snapshot contains English Wikiquote records and Catena units from the <em>Summa Theologiae</em>, <em>Catena Aurea</em>, and Roman Catechism. It deliberately excludes Croatian JSON, HKM, and Compendium data.</p>
+            <p>The current snapshot contains English Wikiquote records and Catena units from the <em>Summa Theologiae</em>, <em>Catena Aurea</em>, and Roman Catechism.</p>
             <p>Attribution and licensing travel with each record, but you should still verify the underlying work and edition before republishing a quotation, especially translations and material obtained through Wikiquote.</p>
             <p><a class="inline-link" href="/api/sources">View current source metadata →</a></p>
           </section>
