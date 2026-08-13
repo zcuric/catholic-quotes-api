@@ -4,10 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="A source-first archive of Catholic quotations and concise primary-text excerpts." />
-    <meta name="theme-color" content="#edf2f6" />
+    <meta name="theme-color" content="#edf2f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101820" media="(prefers-color-scheme: dark)" />
     <meta property="og:title" content="Catholic Quotes API" />
     <meta property="og:description" content="A source-first archive of Catholic quotations and concise primary-text excerpts." />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://catholic-quotes-api.vercel.app/robert-arrington-catholic-interior.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>Catholic Quotes API</title>
     <style>
       :root {
@@ -37,21 +41,21 @@
       .brand span { color: var(--accent); }
       .site-nav { display: flex; align-items: center; gap: 20px; font-size: 13px; }
       .site-nav a { color: var(--muted); text-decoration: none; text-underline-offset: 4px; }
-      .site-nav a:hover { color: var(--accent); text-decoration: underline; }
+      .site-nav a:hover, .site-nav a[aria-current='page'] { color: var(--accent); text-decoration: underline; }
       .status { color: var(--muted); font: 700 10px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
       .status[data-state='error'] { color: var(--accent); }
       main { padding: 32px 0 68px; }
 
       .hero { display: grid; grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr); gap: clamp(28px, 5vw, 76px); align-items: center; min-height: 496px; padding: 28px 0 48px; }
       .hero-copy { max-width: 510px; }
-      .hero-copy p { max-width: 440px; margin: 22px 0 26px; color: var(--muted); font-size: 16px; line-height: 1.55; }
+      .hero-copy p { max-width: 440px; margin: 22px 0 26px; color: var(--muted); font-size: 16px; line-height: 1.55; text-wrap: pretty; }
       h1, h2 { font-family: var(--display); font-weight: 500; letter-spacing: -.046em; }
       h1 { margin: 0; font-size: clamp(3.5rem, 6.4vw, 6.8rem); line-height: .9; }
       .hero-action { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; color: #fff; background: var(--accent); font-size: 13px; font-weight: 700; text-decoration: none; transition: background .18s ease, transform .18s ease; }
       .hero-action:hover { background: var(--accent-deep); }
       .hero-action:active { transform: translateY(1px); }
-      .hero-image { min-height: 390px; margin: 0; overflow: hidden; background: #17212b; }
-      .hero-image img { display: block; width: 100%; height: 100%; min-height: 390px; object-fit: cover; object-position: 45% center; }
+      .hero-image { aspect-ratio: 4 / 3; min-height: 0; margin: 0; overflow: hidden; background: #17212b; }
+      .hero-image img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 48% center; }
       .archive-brief { display: grid; grid-template-columns: minmax(180px, .65fr) minmax(0, 1.35fr); gap: 28px; padding: 24px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
       .archive-brief h2 { margin: 0; font-size: 1.75rem; line-height: 1; }
       .archive-brief p { max-width: 700px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
@@ -74,7 +78,10 @@
       .result-label { color: var(--accent); font: 700 10px/1.45 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
       .result-label span { display: block; }
       .result-label span + span { margin-top: 7px; color: var(--muted); }
-      blockquote { max-width: 790px; margin: 0 0 14px; font: 400 clamp(1.35rem, 2.05vw, 2.05rem)/1.15 var(--display); letter-spacing: -.025em; }
+      blockquote { max-width: 790px; margin: 0 0 14px; font: 400 clamp(1.35rem, 2.05vw, 2.05rem)/1.2 var(--display); letter-spacing: -.025em; text-wrap: pretty; }
+      blockquote.is-collapsed { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 7; }
+      .quote-toggle { min-height: 0; margin: -2px 0 13px; padding: 0; border: 0; background: transparent; color: var(--accent); font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+      .quote-toggle:hover { background: transparent; color: var(--accent-deep); }
       .citation { display: flex; flex-wrap: wrap; gap: 4px 10px; max-width: 790px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
       .citation a { color: var(--accent); font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 3px; }
       .empty { padding: 58px 0; color: var(--muted); font: 1.35rem/1.35 var(--display); text-align: center; }
@@ -106,11 +113,14 @@
         .hero-image { background: #0b1117; }
         .support-qr { border-color: #7591ad; }
       }
+      @media (min-width: 761px) {
+        .toolbar { position: sticky; top: 8px; z-index: 2; box-shadow: 0 10px 28px rgba(8, 57, 118, .09); }
+      }
       @media (max-width: 760px) {
         .shell { width: min(100% - 32px, 1240px); }
         .site-nav { gap: 13px; font-size: 12px; }
         .hero { grid-template-columns: 1fr; gap: 28px; min-height: 0; padding: 30px 0 42px; }
-        .hero-image, .hero-image img { min-height: 280px; }
+        .hero-image { min-height: 280px; }
         .archive-brief, .result { grid-template-columns: 1fr; gap: 12px; }
         .toolbar { grid-template-columns: 1fr 1fr; }
         .toolbar input { grid-column: 1 / -1; }
@@ -130,6 +140,8 @@
         .support { grid-template-columns: 1fr; }
         .support-qr { width: 142px; height: 142px; }
       }
+      @media (prefers-reduced-motion: no-preference) { .loading-line { animation: loading 1.4s ease-in-out infinite; } }
+      @keyframes loading { from { background-position: 100% 0; } to { background-position: -100% 0; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
     </style>
   </head>
@@ -138,7 +150,7 @@
     <header class="shell site-header">
       <a class="brand" href="/">Catholic Quotes <span>API</span></a>
       <nav class="site-nav" aria-label="Primary navigation">
-        <a href="#archive">Archive</a>
+        <a href="#archive" aria-current="page">Archive</a>
         <a href="/docs">Documentation</a>
         <a href="#support">Support</a>
       </nav>
@@ -151,7 +163,7 @@
           <p>Search sourced Catholic quotations and concise primary-text excerpts.</p>
           <a class="hero-action" href="#archive">Browse archive</a>
         </div>
-        <figure class="hero-image"><img src="/robert-arrington-catholic-interior.jpg" alt="Sunlight crossing the interior of a Catholic church" /></figure>
+        <figure class="hero-image"><img src="/robert-arrington-catholic-interior.jpg" alt="Sunlight crossing the interior of a Catholic church" fetchpriority="high" /></figure>
       </section>
 
       <section class="archive-brief" aria-labelledby="brief-title">
@@ -223,9 +235,21 @@
           const detail = item.citation || item.title || item.work || item.source_category || '';
           const recordType = item.is_excerpt ? 'primary excerpt' : (item.quote_type === 'canonical_text' ? 'primary text' : 'quotation');
           const sourceLink = item.source?.url ? `<a href="${esc(item.source.url)}" target="_blank" rel="noreferrer">View source</a>` : '';
-          return `<article class="result"><div class="result-label"><span>${esc(label)}</span><span>${esc(recordType)}</span></div><div><blockquote>“${esc(item.text)}”</blockquote><p class="citation"><span>${esc(detail)}</span>${sourceLink}</p></div></article>`;
+          const isLong = item.text.length > 620;
+          const quoteId = `quote-${esc(item.id)}`;
+          const toggle = isLong ? `<button class="quote-toggle" type="button" aria-expanded="false" aria-controls="${quoteId}">Read full passage</button>` : '';
+          return `<article class="result"><div class="result-label"><span>${esc(label)}</span><span>${esc(recordType)}</span></div><div><blockquote id="${quoteId}" class="${isLong ? 'is-collapsed' : ''}">“${esc(item.text)}”</blockquote>${toggle}<p class="citation"><span>${esc(detail)}</span>${sourceLink}</p></div></article>`;
         }).join('');
       }
+      results.addEventListener('click', (event) => {
+        const toggle = event.target.closest('.quote-toggle');
+        if (!toggle) return;
+        const quote = document.getElementById(toggle.getAttribute('aria-controls'));
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        quote.classList.toggle('is-collapsed', expanded);
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        toggle.textContent = expanded ? 'Read full passage' : 'Show less';
+      });
       async function load() {
         status.textContent = 'loading';
         status.dataset.state = '';

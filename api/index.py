@@ -27,6 +27,7 @@ HTML_PAGES = {
 BINARY_ASSETS = {
     "/support-qr.png": ("assets/buy-me-a-coffee-qr.png", "image/png"),
     "/robert-arrington-catholic-interior.jpg": ("assets/robert-arrington-catholic-interior.jpg", "image/jpeg"),
+    "/favicon.svg": ("assets/favicon.svg", "image/svg+xml"),
 }
 SENTENCE_BREAK = re.compile(r'(?<=[.!?])\s+(?=(?:[A-Z“"\']))')
 ANSWER_START = re.compile(r"\bI answer that\b", re.IGNORECASE)

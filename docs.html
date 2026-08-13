@@ -4,13 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Human-readable documentation for the Catholic Quotes API." />
-    <meta name="theme-color" content="#f4eee2" />
+    <meta name="theme-color" content="#edf2f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101820" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>API documentation - Catholic Quotes API</title>
     <style>
-      :root { --ink: #27201b; --paper: #f4eee2; --wash: #fbf8f1; --muted: #6d6258; --line: rgba(69, 48, 34, .2); --wine: #7c2d31; --wine-dark: #5f2025; --gold: #a27837; --serif: Georgia, 'Times New Roman', serif; --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+      :root { --ink: #17212b; --paper: #edf2f6; --wash: #f8fafc; --muted: #536270; --line: #c7d2dc; --wine: #0b4aa2; --wine-dark: #083976; --gold: #0b4aa2; --code: #17232e; --serif: Georgia, 'Times New Roman', serif; --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
       * { box-sizing: border-box; }
       html { scroll-behavior: smooth; }
-      body { min-width: 320px; margin: 0; color: var(--ink); background-color: var(--paper); background-image: radial-gradient(rgba(64, 45, 30, .075) .6px, transparent .75px); background-size: 7px 7px; font-family: var(--sans); }
+      body { min-width: 320px; margin: 0; color: var(--ink); background: var(--paper); font-family: var(--sans); }
       a { color: inherit; }
       code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
       .skip-link { position: fixed; top: 12px; left: 12px; z-index: 4; padding: 10px 14px; background: var(--wine); color: #fff; transform: translateY(-160%); }
@@ -18,10 +20,6 @@
       .site-header, main, .site-footer { width: min(100% - 40px, 1180px); margin: 0 auto; }
       .site-header { display: flex; align-items: center; justify-content: space-between; gap: 22px; padding: 24px 0 18px; border-bottom: 1px solid var(--line); }
       .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
-      .cross { position: relative; width: 16px; height: 21px; flex: none; }
-      .cross::before, .cross::after { position: absolute; content: ''; background: var(--wine); }
-      .cross::before { top: 0; left: 6px; width: 4px; height: 21px; }
-      .cross::after { top: 6px; left: 1px; width: 14px; height: 4px; }
       .brand-copy { display: grid; gap: 2px; }
       .brand-name { font: 700 13px/1 var(--sans); letter-spacing: .13em; text-transform: uppercase; }
       .brand-subtitle { color: var(--muted); font: 11px/1.2 var(--sans); letter-spacing: .08em; }
@@ -49,23 +47,24 @@
       p, li { max-width: 700px; color: var(--muted); font-size: 14px; line-height: 1.7; }
       p { margin: 0 0 15px; }
       p strong, li strong { color: var(--ink); font-weight: 650; }
-      .note { margin: 22px 0; padding: 16px 18px 16px 20px; border-left: 2px solid var(--gold); background: rgba(251, 248, 241, .58); }
+      .note { margin: 22px 0; padding: 16px 18px 16px 20px; border-left: 2px solid var(--gold); background: var(--wash); }
       .note p { margin: 0; }
       .route { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: baseline; margin-top: 28px; }
-      .method { padding: 4px 6px; color: #fffaf3; background: var(--wine); font: 700 10px/1 var(--sans); letter-spacing: .1em; }
+      .method { padding: 4px 6px; color: #fff; background: var(--wine); font: 700 10px/1 var(--sans); letter-spacing: .1em; }
       .route code { color: var(--ink); font-size: 15px; font-weight: 650; overflow-wrap: anywhere; }
-      pre { overflow-x: auto; margin: 18px 0 0; padding: 17px 18px; color: #f8f0e2; background: #2d2420; border-top: 2px solid var(--wine); font-size: 12px; line-height: 1.65; }
-      :not(pre) > code { padding: 2px 4px; color: var(--wine-dark); background: rgba(124, 45, 49, .08); font-size: .9em; }
+      pre { overflow-x: auto; margin: 18px 0 0; padding: 17px 18px; color: #e7eef5; background: var(--code); border-top: 2px solid var(--wine); font-size: 12px; line-height: 1.65; }
+      :not(pre) > code { padding: 2px 4px; color: var(--wine-dark); background: rgba(11, 74, 162, .08); font-size: .9em; }
       .parameters { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 0 24px; margin: 22px 0 0; border-top: 1px solid var(--line); }
       .parameters dt, .parameters dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); }
       .parameters dt { color: var(--wine); font: 700 12px/1.5 var(--sans); }
       .parameters dd { color: var(--muted); font-size: 13px; line-height: 1.5; }
-      .inline-link { color: var(--wine); font-weight: 650; text-decoration-color: rgba(124, 45, 49, .45); text-underline-offset: 3px; }
+      .inline-link { color: var(--wine); font-weight: 650; text-decoration-color: rgba(11, 74, 162, .45); text-underline-offset: 3px; }
       .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 30px; padding: 26px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.6; }
       .site-footer p { margin: 0; font-size: inherit; }
       .footer-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
-      .footer-links a { color: var(--ink); text-underline-offset: 3px; text-decoration-color: rgba(39, 32, 27, .35); }
+      .footer-links a { color: var(--ink); text-underline-offset: 3px; text-decoration-color: rgba(23, 33, 43, .35); }
       .footer-links a:hover { color: var(--wine); text-decoration-color: currentColor; }
+      @media (prefers-color-scheme: dark) { :root { --ink: #e7eef5; --paper: #101820; --wash: #17232e; --muted: #aab8c5; --line: #344555; --wine: #70a9ff; --wine-dark: #9bc2ff; --gold: #70a9ff; --code: #0b1117; } :not(pre) > code { background: rgba(112, 169, 255, .12); } .footer-links a { text-decoration-color: rgba(231, 238, 245, .35); } }
       @media (max-width: 720px) { .site-header, main, .site-footer { width: min(100% - 32px, 1180px); } .site-nav { display: none; } .intro, .doc-layout { grid-template-columns: 1fr; gap: 30px; } .doc-nav { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 16px 0; border-bottom: 1px solid var(--line); } .parameters { grid-template-columns: 112px minmax(0, 1fr); gap: 0 14px; } }
       @media (max-width: 430px) { .brand-subtitle { display: none; } .doc-nav { grid-template-columns: 1fr; } h1 { font-size: 3.5rem; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
@@ -74,7 +73,7 @@
   <body>
     <a class="skip-link" href="#start">Skip to documentation</a>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="Catholic Quotes API home"><span class="cross" aria-hidden="true"></span><span class="brand-copy"><span class="brand-name">Catholic Quotes API</span><span class="brand-subtitle">a cited commonplace for the Church</span></span></a>
+      <a class="brand" href="/" aria-label="Catholic Quotes API home"><span class="brand-copy"><span class="brand-name">Catholic Quotes API</span><span class="brand-subtitle">a cited commonplace for the Church</span></span></a>
       <nav class="site-nav" aria-label="Site navigation"><a href="/">Archive</a><a href="/docs" aria-current="page">API documentation</a><a href="/api/docs">JSON description</a></nav>
     </header>
 
